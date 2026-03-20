@@ -1,4 +1,4 @@
-# Cinema Sentinel
+# IMAX Sentinel
 
 A personal IMAX ticket watcher for Christopher Nolan and other selected films.
 
@@ -11,6 +11,12 @@ A personal IMAX ticket watcher for Christopher Nolan and other selected films.
 - SQLite
 - Telegram
 
-## Status
+## Local setup
 
-Bootstrap complete. V1 in progress.
+```bash
+uv venv --python 3.14.2
+source .venv/bin/activate
+uv sync
+cp config.example.toml config.toml
+uv run python -m imax_sentinel.main
+```
