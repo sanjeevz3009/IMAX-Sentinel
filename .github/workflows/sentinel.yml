@@ -32,17 +32,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
-      - name: Cache Camoufox binary
-        uses: actions/cache@v4
-        id: camoufox-cache
-        with:
-          path: ~/.local/share/camoufox
-          key: camoufox-${{ runner.os }}-${{ hashFiles('uv.lock') }}
-          restore-keys: |
-            camoufox-${{ runner.os }}-
-
-      - name: Download Camoufox binary (if not cached)
-        if: steps.camoufox-cache.outputs.cache-hit != 'true'
+      - name: Download Camoufox binary
         run: uv run python -m camoufox fetch
 
       - name: Write config.toml
