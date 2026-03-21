@@ -8,6 +8,11 @@ listing_urls = [
 
 [watch]
 titles = [
+  "Interstellar",
+  "Tenet",
+  "Dunkirk",
+  "Oppenheimer",
+  "Inception",
   "The Odyssey",
 ]
 # true  → only alert on titles in the list above

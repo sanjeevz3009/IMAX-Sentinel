@@ -235,5 +235,4 @@ data/challenges/*.html
 .env.local
 
 # config.toml contains local paths/settings but example should be tracked
-config.toml
 !config.example.toml
