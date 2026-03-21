@@ -1,7 +1,8 @@
 [bfi]
-urls = [
-  "https://whatson.bfi.org.uk/imax/Online/default.asp",
-  "https://whatson.bfi.org.uk/imax/Online/default.asp?BOparam::WScontent::loadArticle::permalink=special-screenings-events",
+# Listing pages — the only two entry points we scrape.
+# From each we extract film stubs, then visit each film's permalink.
+listing_urls = [
+  "https://whatson.bfi.org.uk/imax/Online/default.asp?BOparam::WScontent::loadArticle::permalink=imax-new-releases&BOparam::WScontent::loadArticle::context_id=",
   "https://whatson.bfi.org.uk/imax/Online/default.asp?BOparam::WScontent::loadArticle::permalink=christopher-nolan-film&BOparam::WScontent::loadArticle::context_id=",
 ]
 
@@ -12,15 +13,30 @@ titles = [
   "Dunkirk",
   "Oppenheimer",
   "Inception",
+  "The Odyssey",
 ]
-watch_nolan_only = false
-watch_nolan_season = true
+# true  → only alert on titles in the list above
+# false → alert on any film that appears or opens booking
+watchlist_only = true
 
 [app]
 log_level = "INFO"
+
+# Raw HTML snapshots for debugging / parser development
 save_raw_html = true
 raw_html_dir = "data/raw"
+save_challenge_html = true
+challenge_html_dir = "data/challenges"
 
+# SQLite state store
+db_path = "data/sentinel.db"
+
+# Browser
 browser_timeout_ms = 30000
 browser_wait_after_load_ms = 5000
 browser_headless = true
+browser_profile_dir = ".camoufox-data"
+browser_warmup_url = "https://whatson.bfi.org.uk/imax/"
+browser_delay_between_pages_seconds = 2.5
+browser_enable_stealth = true
+browser_simulate_human_behaviour = true

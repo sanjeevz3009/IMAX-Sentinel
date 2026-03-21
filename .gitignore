@@ -219,5 +219,21 @@ config.toml
 data/*.db
 data/*.sqlite
 data/*.sqlite3
-data/raw/*.html
 .DS_Store
+data/raw/*.html
+data/challenges/*.html
+
+# Camoufox browser profile (replaced .playwright-data)
+.camoufox-data/
+
+# Keep empty data directories in git
+!data/raw/.keep
+!data/challenges/.keep
+
+# Secrets / env
+.env
+.env.local
+
+# config.toml contains local paths/settings but example should be tracked
+config.toml
+!config.example.toml
