@@ -2,31 +2,23 @@ name: IMAX Sentinel
 
 on:
   schedule:
-    # Every 10 minutes — adjust to taste
-    # Minimum GitHub Actions granularity is 5 minutes
-    # Note: GitHub may delay scheduled runs by a few minutes under load
     - cron: "*/10 * * * *"
-
-  # Allow manual trigger from the Actions tab for testing
   workflow_dispatch:
 
 permissions:
-  contents: write   # needed to commit sentinel.db back to the repo
+  contents: write
 
 jobs:
   watch:
     runs-on: ubuntu-latest
-    timeout-minutes: 10   # hard kill if something hangs
+    timeout-minutes: 10
 
     steps:
-      # ── 1. Checkout ────────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Fetch with a token so we can push the DB commit back
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ── 2. Set up Python + uv ──────────────────────────────────────────────
       - name: Install uv
         uses: astral-sh/setup-uv@v4
         with:
@@ -37,13 +29,9 @@ jobs:
         with:
           python-version: "3.14"
 
-      # ── 3. Install dependencies ────────────────────────────────────────────
       - name: Install dependencies
         run: uv sync --frozen
 
-      # ── 4. Cache Camoufox browser binary ──────────────────────────────────
-      # The Firefox binary is ~100MB — caching it means we download it once
-      # rather than on every run, saving ~30s and bandwidth.
       - name: Cache Camoufox binary
         uses: actions/cache@v4
         id: camoufox-cache
@@ -57,30 +45,24 @@ jobs:
         if: steps.camoufox-cache.outputs.cache-hit != 'true'
         run: uv run python -m camoufox fetch
 
-      # ── 5. Write config.toml from secrets ─────────────────────────────────
-      # config.toml is gitignored so we generate it at runtime from a secret.
-      # In GitHub: Settings → Secrets → Actions → New secret
-      # Name: CONFIG_TOML
-      # Value: paste the full contents of your config.toml
       - name: Write config.toml
+        env:
+          CONFIG_TOML: ${{ secrets.CONFIG_TOML }}
         run: python -c "import os; open('config.toml', 'w').write(os.environ['CONFIG_TOML'])"
 
-      # ── 6. Run the bot ─────────────────────────────────────────────────────
       - name: Run IMAX Sentinel
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: uv run python -m imax_sentinel.main
 
-      # ── 7. Commit sentinel.db back to the repo ────────────────────────────
-      # This persists change detection state between runs.
-      # Only commits if the DB actually changed — avoids empty commits.
       - name: Persist sentinel.db
-        if: always()   # run even if the bot step failed, to preserve partial state
+        if: always()
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p data
+          touch data/sentinel.db
           git add data/sentinel.db
-          # Only commit if there are staged changes
           git diff --cached --quiet || git commit -m "chore: update sentinel.db [skip ci]"
           git push
