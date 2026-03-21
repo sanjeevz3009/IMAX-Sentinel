@@ -63,7 +63,7 @@ jobs:
       # Name: CONFIG_TOML
       # Value: paste the full contents of your config.toml
       - name: Write config.toml
-        run: echo "${{ secrets.CONFIG_TOML }}" > config.toml
+        run: python -c "import os; open('config.toml', 'w').write(os.environ['CONFIG_TOML'])"
 
       # ── 6. Run the bot ─────────────────────────────────────────────────────
       - name: Run IMAX Sentinel
