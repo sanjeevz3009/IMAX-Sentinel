@@ -18,3 +18,9 @@ watch_nolan_season = true
 
 [app]
 log_level = "INFO"
+save_raw_html = true
+raw_html_dir = "data/raw"
+
+browser_timeout_ms = 30000
+browser_wait_after_load_ms = 5000
+browser_headless = true
