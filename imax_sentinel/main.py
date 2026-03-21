@@ -15,6 +15,8 @@ from __future__ import annotations
 
 import logging
 
+from dotenv import load_dotenv
+
 from imax_sentinel.config import load_config
 from imax_sentinel.fetch import fetch_pages, save_html_snapshot
 from imax_sentinel.logging_config import setup_logging
@@ -32,6 +34,9 @@ def _title_matches(title: str, watchlist: list[str]) -> bool:
 
 
 def main() -> None:
+    load_dotenv()
+    config = load_config()
+
     config = load_config()
     app = config.get("app", {})
 
