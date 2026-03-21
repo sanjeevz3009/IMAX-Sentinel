@@ -88,8 +88,6 @@ def is_challenge_page(html: str) -> bool:
     markers = [
         "performing security verification",
         "cf-turnstile-response",
-        "challenge-platform",
-        "cloudflare",
         "just a moment",
     ]
     lowered = html.lower()
